@@ -30,10 +30,10 @@ editor_options:
 
 
 **Code Authors**: Mark E. Pepin, MD, PhD, MS **Contact**:
-[mepepin\@bwh.harvard.edu](mailto:mepepin@bwh.harvard.edu){.email}\
-**Institution**: Brigham and Women's Hospital \| Broad Institute of
+[mpepin\@stanford.edu](mailto:mpepin@stanford.edu){.email}\
+**Affiliations**: Heidelberg University Hospital, Institute for Experimental Cardiology | Stanford University, Division of Cardiovascular Medicine \| Broad Institute of
 Harvard and MIT\
-**Location**: Boston, MA, USA
+**Location**: Stanford, CA
 
 # Sample Pre-processing
 
@@ -49,126 +49,115 @@ excluded from downstream analysis.
 
 ``` r
 start_time <- Sys.time()
+options(future.globals.maxSize = 16 * 1024^3)  # Set the future global memory limit to 16 GB
 library(Seurat)
-Index <- openxlsx::read.xlsx("../1_Input/M020_Sample.Info_NvJ_mep.xlsx")
-snRNA.dat_1 <- Read10X(data.dir = paste0("../1_Input/snRNA/", Index$Treatment[1],"_", Index$Background[1], "_", Index$MouseID[1], "/filtered_feature_bc_matrix/"))
-snRNA.dat_2 <- Read10X(data.dir = paste0("../1_Input/snRNA/", Index$Treatment[2],"_", Index$Background[2], "_", Index$MouseID[2], "/filtered_feature_bc_matrix/"))
-snRNA.dat_3 <- Read10X(data.dir = paste0("../1_Input/snRNA/", Index$Treatment[3],"_", Index$Background[3], "_", Index$MouseID[3], "/filtered_feature_bc_matrix/"))
-snRNA.dat_7 <- Read10X(data.dir = paste0("../1_Input/snRNA/", Index$Treatment[4],"_", Index$Background[4], "_", Index$MouseID[4], "/filtered_feature_bc_matrix/"))
-snRNA.dat_8 <- Read10X(data.dir = paste0("../1_Input/snRNA/", Index$Treatment[5],"_", Index$Background[5], "_", Index$MouseID[5], "/filtered_feature_bc_matrix/"))
-snRNA.dat_9 <- Read10X(data.dir = paste0("../1_Input/snRNA/", Index$Treatment[6],"_", Index$Background[6], "_", Index$MouseID[6], "/filtered_feature_bc_matrix/"))
-snRNA.dat_13 <- Read10X(data.dir = paste0("../1_Input/snRNA/", Index$Treatment[7],"_", Index$Background[7], "_", Index$MouseID[7], "/filtered_feature_bc_matrix/"))
-snRNA.dat_14 <- Read10X(data.dir = paste0("../1_Input/snRNA/", Index$Treatment[8],"_", Index$Background[8], "_", Index$MouseID[8], "/filtered_feature_bc_matrix/"))
-snRNA.dat_15 <- Read10X(data.dir = paste0("../1_Input/snRNA/", Index$Treatment[9],"_", Index$Background[9], "_", Index$MouseID[9], "/filtered_feature_bc_matrix/"))
-snRNA.dat_19 <- Read10X(data.dir = paste0("../1_Input/snRNA/", Index$Treatment[10],"_", Index$Background[10], "_", Index$MouseID[10], "/filtered_feature_bc_matrix/"))
-snRNA.dat_20 <- Read10X(data.dir = paste0("../1_Input/snRNA/", Index$Treatment[11],"_", Index$Background[11], "_", Index$MouseID[11], "/filtered_feature_bc_matrix/"))
-snRNA.dat_21 <- Read10X(data.dir = paste0("../1_Input/snRNA/", Index$Treatment[12],"_", Index$Background[12], "_", Index$MouseID[12], "/filtered_feature_bc_matrix/"))
-# Initialize the Seurat object with the raw (non-normalized data).
-snRNA_seurat_1 <- CreateSeuratObject(counts = snRNA.dat_1, project = "snRNA_NNT", min.cells = 3, min.features = 200)
-snRNA_seurat_1[["SampleID"]] <- Index$MouseID[1]
-snRNA_seurat_1[["Background"]] <- Index$Background[1]
-snRNA_seurat_1[["Treatment"]] <- Index$Treatment[1]
-snRNA_seurat_2 <- CreateSeuratObject(counts = snRNA.dat_2, project = "snRNA_NNT", min.cells = 3, min.features = 200)
-snRNA_seurat_2[["SampleID"]] <- Index$MouseID[2]
-snRNA_seurat_2[["Background"]] <- Index$Background[2]
-snRNA_seurat_2[["Treatment"]] <- Index$Treatment[2]
-snRNA_seurat_3 <- CreateSeuratObject(counts = snRNA.dat_3, project = "snRNA_NNT", min.cells = 3, min.features = 200)
-snRNA_seurat_3[["SampleID"]] <- Index$MouseID[3]
-snRNA_seurat_3[["Background"]] <- Index$Background[3]
-snRNA_seurat_3[["Treatment"]] <- Index$Treatment[3]
-snRNA_seurat_7 <- CreateSeuratObject(counts = snRNA.dat_7, project = "snRNA_NNT", min.cells = 3, min.features = 200)
-snRNA_seurat_7[["SampleID"]] <- Index$MouseID[4]
-snRNA_seurat_7[["Background"]] <- Index$Background[4]
-snRNA_seurat_7[["Treatment"]] <- Index$Treatment[4]
-snRNA_seurat_8 <- CreateSeuratObject(counts = snRNA.dat_8, project = "snRNA_NNT", min.cells = 3, min.features = 200)
-snRNA_seurat_8[["SampleID"]] <- Index$MouseID[5]
-snRNA_seurat_8[["Background"]] <- Index$Background[5]
-snRNA_seurat_8[["Treatment"]] <- Index$Treatment[5]
-snRNA_seurat_9 <- CreateSeuratObject(counts = snRNA.dat_9, project = "snRNA_NNT", min.cells = 3, min.features = 200)
-snRNA_seurat_9[["SampleID"]] <- Index$MouseID[6]
-snRNA_seurat_9[["Background"]] <- Index$Background[6]
-snRNA_seurat_9[["Treatment"]] <- Index$Treatment[6]
-snRNA_seurat_13 <- CreateSeuratObject(counts = snRNA.dat_13, project = "snRNA_NNT", min.cells = 3, min.features = 200)
-snRNA_seurat_13[["SampleID"]] <- Index$MouseID[7]
-snRNA_seurat_13[["Background"]] <- Index$Background[7]
-snRNA_seurat_13[["Treatment"]] <- Index$Treatment[7]
-snRNA_seurat_14 <- CreateSeuratObject(counts = snRNA.dat_14, project = "snRNA_NNT", min.cells = 3, min.features = 200)
-snRNA_seurat_14[["SampleID"]] <- Index$MouseID[8]
-snRNA_seurat_14[["Background"]] <- Index$Background[8]
-snRNA_seurat_14[["Treatment"]] <- Index$Treatment[8]
-snRNA_seurat_15 <- CreateSeuratObject(counts = snRNA.dat_15, project = "snRNA_NNT", min.cells = 3, min.features = 200)
-snRNA_seurat_15[["SampleID"]] <- Index$MouseID[9]
-snRNA_seurat_15[["Background"]] <- Index$Background[9]
-snRNA_seurat_15[["Treatment"]] <- Index$Treatment[9]
-snRNA_seurat_19 <- CreateSeuratObject(counts = snRNA.dat_19, project = "snRNA_NNT", min.cells = 3, min.features = 200)
-snRNA_seurat_19[["SampleID"]] <- Index$MouseID[10]
-snRNA_seurat_19[["Background"]] <- Index$Background[10]
-snRNA_seurat_19[["Treatment"]] <- Index$Treatment[10]
-snRNA_seurat_20 <- CreateSeuratObject(counts = snRNA.dat_20, project = "snRNA_NNT", min.cells = 3, min.features = 200)
-snRNA_seurat_20[["SampleID"]] <- Index$MouseID[11]
-snRNA_seurat_20[["Background"]] <- Index$Background[11]
-snRNA_seurat_20[["Treatment"]] <- Index$Treatment[11]
-snRNA_seurat_21 <- CreateSeuratObject(counts = snRNA.dat_21, project = "snRNA_NNT", min.cells = 3, min.features = 200)
-snRNA_seurat_21[["SampleID"]] <- Index$MouseID[12]
-snRNA_seurat_21[["Background"]] <- Index$Background[12]
-snRNA_seurat_21[["Treatment"]] <- Index$Treatment[12]
-# Initialize the Seurat object with the raw (non-normalized data).
-snRNA_seurat_1[["percent.mt"]] <- PercentageFeatureSet(snRNA_seurat_1, assay = "RNA", pattern = "^mt-")
-snRNA_seurat_1 <- subset(snRNA_seurat_1, subset = nFeature_RNA > 200 & percent.mt < 5)
-snRNA_seurat_2[["percent.mt"]] <- PercentageFeatureSet(snRNA_seurat_2, assay = "RNA", pattern = "^mt-")
-snRNA_seurat_2 <- subset(snRNA_seurat_2, subset = nFeature_RNA > 200 & percent.mt < 5)
-snRNA_seurat_3[["percent.mt"]] <- PercentageFeatureSet(snRNA_seurat_3, assay = "RNA", pattern = "^mt-")
-snRNA_seurat_3 <- subset(snRNA_seurat_3, subset = nFeature_RNA > 200 & percent.mt < 5)
-snRNA_seurat_7[["percent.mt"]] <- PercentageFeatureSet(snRNA_seurat_7, assay = "RNA", pattern = "^mt-")
-snRNA_seurat_7 <- subset(snRNA_seurat_7, subset = nFeature_RNA > 200 & percent.mt < 5)
-snRNA_seurat_8[["percent.mt"]] <- PercentageFeatureSet(snRNA_seurat_8, assay = "RNA", pattern = "^mt-")
-snRNA_seurat_8 <- subset(snRNA_seurat_8, subset = nFeature_RNA > 200 & percent.mt < 5)
-snRNA_seurat_9[["percent.mt"]] <- PercentageFeatureSet(snRNA_seurat_9, assay = "RNA", pattern = "^mt-")
-snRNA_seurat_9 <- subset(snRNA_seurat_9, subset = nFeature_RNA > 200 & percent.mt < 5)
-snRNA_seurat_13[["percent.mt"]] <- PercentageFeatureSet(snRNA_seurat_13, assay = "RNA", pattern = "^mt-")
-snRNA_seurat_13 <- subset(snRNA_seurat_13, subset = nFeature_RNA > 200 & percent.mt < 5)
-snRNA_seurat_14[["percent.mt"]] <- PercentageFeatureSet(snRNA_seurat_14, assay = "RNA", pattern = "^mt-")
-snRNA_seurat_14 <- subset(snRNA_seurat_14, subset = nFeature_RNA > 200 & percent.mt < 5)
-snRNA_seurat_15[["percent.mt"]] <- PercentageFeatureSet(snRNA_seurat_15, assay = "RNA", pattern = "^mt-")
-snRNA_seurat_15 <- subset(snRNA_seurat_15, subset = nFeature_RNA > 200 & percent.mt < 5)
-snRNA_seurat_19[["percent.mt"]] <- PercentageFeatureSet(snRNA_seurat_19, assay = "RNA", pattern = "^mt-")
-snRNA_seurat_19 <- subset(snRNA_seurat_19, subset = nFeature_RNA > 200 & percent.mt < 5)
-snRNA_seurat_20[["percent.mt"]] <- PercentageFeatureSet(snRNA_seurat_20, assay = "RNA", pattern = "^mt-")
-snRNA_seurat_20 <- subset(snRNA_seurat_20, subset = nFeature_RNA > 200 & percent.mt < 5)
-snRNA_seurat_21[["percent.mt"]] <- PercentageFeatureSet(snRNA_seurat_21, assay = "RNA", pattern = "^mt-")
-snRNA_seurat_21 <- subset(snRNA_seurat_21, subset = nFeature_RNA > 200 & percent.mt < 5)
-snRNA_list<-list(snRNA_seurat_1, snRNA_seurat_2, snRNA_seurat_3, snRNA_seurat_7, snRNA_seurat_8, snRNA_seurat_9, snRNA_seurat_13, snRNA_seurat_14, snRNA_seurat_15, snRNA_seurat_19, snRNA_seurat_20, snRNA_seurat_21)
-# normalize and identify variable features for each dataset independently
-TAA.list <- lapply(X = snRNA_list, FUN = function(x) {
-    x <- NormalizeData(x)
-    x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 10000)
-    x <- ScaleData(x)
-    x <- SCTransform(x)
-})
-# Find most variable features across samples to integrate
-integ_features <- SelectIntegrationFeatures(object.list = TAA.list, nfeatures = 3000)
-merged_seurat <- merge(x = TAA.list[[1]],
-		       y = TAA.list[2:length(TAA.list)],
-		       merge.data = TRUE)
+library(openxlsx)
+library(dplyr)
+library(DoubletFinder)
+# Read sample info
+Index <- read.xlsx("../1_Input/M020_Sample.Info_NvJ_mep.xlsx")
+# Initialize an empty list to store Seurat objects
+seurat_list <- list()
+
+# Loop through all the samples in Index
+for (i in 1:nrow(Index)) {
+  data_dir <- paste0("../1_Input/snRNA/", Index$Treatment[i], "_", Index$Background[i], "_", Index$MouseID[i], "/filtered_feature_bc_matrix/")
+  
+  # Read the data
+  snRNA_data <- Read10X(data.dir = data_dir)
+  
+  # Create Seurat object
+  seurat_obj <- CreateSeuratObject(counts = snRNA_data, project = "snRNA_NNT", min.cells = 3, min.features = 200)
+  seurat_obj[["SampleID"]] <- Index$MouseID[i]
+  seurat_obj[["Background"]] <- Index$Background[i]
+  seurat_obj[["Treatment"]] <- Index$Treatment[i]
+  
+  # Add mitochondrial percentage
+  seurat_obj[["percent.mt"]] <- PercentageFeatureSet(seurat_obj, assay = "RNA", pattern = "^mt-")
+  
+  # Subset data
+  seurat_obj <- subset(seurat_obj, subset = nFeature_RNA > 200 & percent.mt < 5)
+  
+  # Normalization, variable features, and scaling
+  seurat_obj <- NormalizeData(seurat_obj)
+  seurat_obj <- FindVariableFeatures(seurat_obj, selection.method = "vst", nfeatures = 10000)
+  seurat_obj <- ScaleData(seurat_obj)
+  seurat_obj <- SCTransform(seurat_obj)
+  
+  # PCA
+  seurat_obj <- RunPCA(seurat_obj, npcs = 50)
+  
+  # Perform clustering (necessary for DoubletFinder)
+  seurat_obj <- FindNeighbors(seurat_obj, dims = 1:40)  # Finding neighbors
+  seurat_obj <- FindClusters(seurat_obj, resolution = 0.2)  # Find clusters
+
+  # DoubletFinder parameter sweep
+  sweep_res <- paramSweep(seurat_obj, PCs = 1:40, sct = TRUE)
+  sweep_stats <- summarizeSweep(sweep_res, GT = FALSE)
+  bcmvn <- find.pK(sweep_stats)
+  optimal_pK <- as.numeric(as.character(bcmvn[which.max(bcmvn$BCmetric), "pK"]))
+  
+  # Estimate homotypic doublet proportion and expected number of doublets
+  homotypic_prop <- modelHomotypic(seurat_obj$seurat_clusters)  # Adjust clusters if needed
+  nExp_poi <- round(0.075 * nrow(seurat_obj@meta.data))  # Assuming 7.5% doublet rate
+  nExp_poi_adj <- round(nExp_poi * (1 - homotypic_prop))
+  
+  # DoubletFinder
+  seurat_obj <- doubletFinder(seurat_obj, PCs = 1:40, pN = 0.25, pK = optimal_pK, nExp = nExp_poi_adj, reuse.pANN = FALSE, sct = TRUE)
+  
+  # Filter out doublets
+ # Find the column name that starts with "DF.classifications"
+df_class_col <- grep("^DF.classifications", colnames(seurat_obj@meta.data), value = TRUE)
+# Add column that computes the doublet perentage
+doublet_percentage <- seurat_obj@meta.data %>%
+  group_by(SampleID) %>%
+  summarise(PercentDoublets = mean((!!as.name(df_class_col)) == "Doublet") * 100)
+# Subset based on the column dynamically
+seurat_obj <- subset(seurat_obj, subset = (!!as.name(df_class_col)) == "Singlet")
+
+# Step 4: Merge this doublet percentage information back into the Seurat metadata
+seurat_obj@meta.data <- merge(seurat_obj@meta.data, doublet_percentage, by = "SampleID", all.x = TRUE)
+
+  # Store the processed Seurat object in the list
+  seurat_list[[i]] <- seurat_obj
+}
+
+# Ensure unique cell names and matching metadata rownames across Seurat objects
+for (i in seq_along(seurat_list)) {
+    seurat_list[[i]] <- RenameCells(object = seurat_list[[i]], add.cell.id = Index$MouseID[i])
+    rownames(seurat_list[[i]]@meta.data) <- Cells(seurat_list[[i]])  # Sync metadata rownames with cell names
+}
+
+# Select features for integration
+integ_features <- SelectIntegrationFeatures(object.list = seurat_list, nfeatures = 3000)
+
+# Merge Seurat objects
+merged_seurat <- merge(x = seurat_list[[1]], y = seurat_list[2:length(seurat_list)], merge.data = TRUE)
+
+# Set assay and variable features for merged object
 DefaultAssay(merged_seurat) <- "SCT"
-# Manually set variable features of merged Seurat object
 VariableFeatures(merged_seurat) <- integ_features
-# Calculate PCs using manually set variable features
+
+# Run PCA
 merged_seurat <- RunPCA(merged_seurat, assay = "SCT", npcs = 50)
+
+# Perform Harmony integration
 library(harmony)
-harmonized_seurat <- RunHarmony(merged_seurat, 
-				group.by.vars = c("SampleID"), 
-				reduction = "pca", assay.use = "SCT", reduction.save = "harmony")
+harmonized_seurat <- RunHarmony(merged_seurat, group.by.vars = "SampleID", reduction = "pca", assay.use = "SCT", reduction.save = "harmony")
+
+# UMAP, neighbors, and clustering on Harmony results
 harmonized_seurat <- RunUMAP(harmonized_seurat, reduction = "harmony", assay = "SCT", dims = 1:40)
-harmonized_seurat <- FindNeighbors(object = harmonized_seurat, reduction = "harmony")
+harmonized_seurat <- FindNeighbors(harmonized_seurat, reduction = "harmony")
 harmonized_seurat <- FindClusters(harmonized_seurat, resolution = c(0.2, 0.4, 0.6, 0.8, 1.0))
+
+# Prepare for marker identification
 harmonized_seurat <- PrepSCTFindMarkers(harmonized_seurat, assay = "SCT", verbose = TRUE)
-# markers <- FindAllMarkers(
-#   object = harmonized_seurat,
-#   assay = "SCT",
-#   verbose = F
-# )
-# saveRDS(harmonized_seurat, file = "../1_Input/NNT_Integration_snRNA.rds")
+
+# Save the final object
+saveRDS(harmonized_seurat, file = "../1_Input/NNT_Integration_snRNAv2.rds")
+
+# Record end time
+end_time <- Sys.time()
 ```
 
 # Unbiased Cell-Type Identification
@@ -181,7 +170,7 @@ Uniform Manifold Approximation and Projection (UMAP) was performed on
 the scaled and variable gene expression data, and the top 30 principal
 components were used to define Louvian clustering with the
 "FindClusters" function (resolution = 0.2). Uniform Manifold
-Approximation and Projection (UMAP) was employed for dimensionality
+Approximation and Projection (UMAP) was used for dimensional
 reduction and visualization of the clustered data. Cellular origins of
 each sequenced nucleus were individually estimated using singleR
 (2.6.0), which computes a Pearson correlation between the nuclear
@@ -229,7 +218,7 @@ library(Nebulosa)
 library(ggplot2)
 library(ggtrace)
 library(ggrepel)
-snRNA.combined<-readRDS(file = "../1_Input/NNT_Integration_snRNA.rds")
+snRNA.combined<-readRDS(file = "../1_Input/NNT_Integration_snRNAv2.rds")
 Idents(snRNA.combined) <- "SCT_snn_res.0.2" # Change the identity of the clusters to cell types
 UMAP_Treatment<-DimPlot(snRNA.combined,  label = T, split.by = "Treatment") + NoLegend()
 UMAP_Background<-DimPlot(snRNA.combined,  label = T, split.by = "Background")
@@ -262,7 +251,10 @@ dev.off()
 library(scRNAseq)
 library(dplyr)
 library(Seurat)
-hESCs <- as.SingleCellExperiment(readRDS(file = "../1_Input/NNT_Integration_snRNA.rds"))
+seurat_obj <- readRDS(file = "../1_Input/NNT_Integration_snRNAv2.rds")
+DefaultAssay(seurat_obj) <- "SCT"  # Specify the assay you want
+hESCs <- as.SingleCellExperiment(seurat_obj, assay = "SCT")
+# hESCs <- as.SingleCellExperiment(readRDS(file = "../1_Input/NNT_Integration_snRNAv2.rds"))
 # reference dataset (formatted above)
 sceM <- readRDS("../1_Input/Annotation/Global_lognormalised_seurat.rds")
 sceM <- subset(sceM, subset = cell_or_nuclei == "Nuclei" & region=="LV" & modality=="snRNA")
@@ -293,20 +285,16 @@ pred.hesSingleRpred.hesc <- SingleR(test = hESCs, ref = sceM, assay.type.test="c
     labels = sceM$cell_type)
 hESC_seur <- as.Seurat(hESCs, counts = "counts", data = NULL)
 hESC_seur[["SingleR.labels"]] <- pred.hesSingleRpred.hesc$labels
-# 
-# # Or if `method="cluster"` was used:
-# snRNA.combined[["SingleR.cluster.labels"]] <- 
-#         pred.hesSingleRpred.hesc$labels[match(snRNA.combined[[]][["my.input.clusters"]], rownames(pred.hesSingleRpred.hesc))]
-snRNA.combined[["SingleR.labels"]] <- pred.hesSingleRpred.hesc$labels
-Idents(snRNA.combined) <- snRNA.combined$SingleR.labels
-UMAP_Treatment<-DimPlot(snRNA.combined,  label = T, split.by = "Treatment") + NoLegend()
-UMAP_Background<-DimPlot(snRNA.combined,  label = T, split.by = "Background")
+seurat_obj[["SingleR.labels"]] <- pred.hesSingleRpred.hesc$labels
+Idents(seurat_obj) <- seurat_obj$SingleR.labels
+UMAP_Treatment<-DimPlot(seurat_obj,  label = T, split.by = "Treatment") + NoLegend()
+UMAP_Background<-DimPlot(seurat_obj,  label = T, split.by = "Background")
 UMAP_Treatment + UMAP_Background
 pdf(file = "../2_Output/UMAP_Clusters_unbiased.annotation.pdf", height = 5, width = 9)
 UMAP_Treatment
 UMAP_Background
 dev.off()
-saveRDS(snRNA.combined, , file = "../1_Input/snRNA_unbiased.Annnotation_snRNA.rds")
+saveRDS(snRNA.combined, , file = "../1_Input/snRNA_unbiased.Annnotation_snRNAv2.rds")
 # Annotation performance with SingleR
 ## heatmap of annotation scores
 pdf("../2_Output/annotation.heatmap.pdf")
@@ -317,6 +305,8 @@ plotDeltaDistribution(pred.hesSingleRpred.hesc, ncol = 3)
 ```
 
 # Gene Markers to Validate Cell Type Identification
+
+We manually inspected cell-type-specific gene markers using density and ridge plots to validate cell identity that was assigned by the using the automated SingleR package (above). For each cell type, we plotted the combined expression of multiple marker genes. Additionally, we created individual density plots for representative genes within each cell type. To further analyze the distribution of marker genes, we used ridge plots to understand the distribution of expression within each cell type. The resulting Seurat object was subsequently saved for downstream analysis.
 
 
 ``` r
@@ -383,21 +373,8 @@ pdf(file = "../2_Output/CellType_FeaturePlots.pdf", width = 11, height = 11)
             Lymphoid_dens,
             Myeloid_dens,
             ncol = 3, nrow = 3)
-# FeaturePlot(snRNA.combined, reduction = "umap", label = T, features = Marker_list, ncol = 3)
 dev.off()
-# FeaturePlot(snRNA.combined, reduction = "umap", label = T, features = c(Mesothelial[1],Lymphoid[1], Myeloid[1]), split.by = "Treatment", ncol = 2)
-# FeaturePlot(snRNA.combined, reduction = "umap", label = T, features = EC, split.by = "Treatment", ncol = 2)
-# FeaturePlot(snRNA.combined, reduction = "umap", label = T, features = Neuronal, split.by = "Treatment", ncol = 2)
-# FeaturePlot(snRNA.combined, reduction = "umap", label = T, features = Fibroblast, split.by = "Treatment", ncol = 2)
-# FeaturePlot(snRNA.combined, reduction = "umap", label = T, features = Mesothelial, split.by = "Treatment", ncol = 2)
-# # FeaturePlot(snRNA.combined, reduction = "umap", label = T, features = Pericyte, split.by = "Treatment", ncol = 2)
-# FeaturePlot(snRNA.combined, reduction = "umap", label = T, features = SMC, split.by = "Treatment", ncol = 2)
-# FeaturePlot(snRNA.combined, reduction = "umap", label = T, features = ACM, split.by = "Treatment", ncol = 2)
-# FeaturePlot(snRNA.combined, reduction = "umap", label = T, features = VCM, split.by = "Treatment", ncol = 2)
-# FeaturePlot(snRNA.combined, reduction = "umap", label = T, features = Lymphoid, split.by = "Treatment", ncol = 2)
-# FeaturePlot(snRNA.combined, reduction = "umap", label = T, features = Myeloid, split.by = "Treatment", ncol = 2)
-# FeaturePlot(snRNA.combined, reduction = "umap", label = T, features = Adipocyte, split.by = "Treatment", ncol = 2)
-# FeaturePlot(snRNA.combined, reduction = "umap", label = T, split.by = "Background", features = "Nnt", ncol = 2)
+
 dev.off()
 ## Use ridgeplots to identify bimodal gene marker distributions (enriched clusters)
 pdf(file = "../2_Output/Celltype_RidgePlots.pdf", height = 10, width = 15)
@@ -492,6 +469,8 @@ saveRDS(snRNA.combined, file = "../1_Input/NNT_Labelling_snRNA.rds")
 
 ## UMAP and Cellular Proportions
 
+We created UMAP plots highlighting clustering by CellType and Treatment, followed by proportional bar plots that examined cell-type distributions across sample groups and treatment conditions. These proportional data were exported to CSV and Excel for further analysis. We also visualized PCA loadings and generated dimensional heatmaps, saving all plots as PDFs.
+
 
 ``` r
 # Cell-type Specific Differential Expression
@@ -585,6 +564,7 @@ pdf(file = "../2_Output/PC_Heatmaps.pdf")
 DimHeatmap(TAA.combined, dims = 1:15, cells = 500, balanced = TRUE)
 dev.off()
 ```
+
 
 # Loop: Cell Type-specific and Substrain-dependent Effects of HFD+L-NAME relative to Ctrl
 
@@ -1211,6 +1191,652 @@ Pathways_CVD <- Pathways %>% filter(grepl("Blood Pressure|Coronary|Atrial|Heart|
 write.csv(Pathways_CVD, "../2_Output/CVD.Pathway_GWAS.csv")
 ```
 
+
+# Venn Diagram
+
+We used differential expression analysis to compare gene expression of HFpEF (HFD+L-NAME) vs. Ctrl between two backgrounds (N vs. J). We then created matrices indicating the presence of significant DE genes across cell types for HFpEF and Ctrl, respectively, and visualized these patterns using "UpSet" plots (a high-order venn diagram). We performed Reactome and GO pathway enrichment analyses for each cell type, visualizing the results in a dot plot, showing enriched pathways for each cell type across conditions.
+
+
+``` r
+options(future.globals.maxSize = 8 * 1024^3)  # 2GB
+library(Seurat)
+library(dplyr)
+library(openxlsx)
+library(UpSetR)
+
+# Load the Seurat object
+TAA.combined <- readRDS(file = "../1_Input/NNT_Labelling_snRNA.rds")
+# Define unique cell types
+cell_states <- unique(TAA.combined$CellType)
+
+# Initialize lists for storing DEGs per condition and cell type
+deg_list_HFpEF <- list()
+deg_list_Ctrl <- list()
+
+# Loop through each cell type and calculate DEGs for HFpEF and Ctrl conditions separately
+for (CELL in cell_states) {
+  # Subset the Seurat object for HFpEF and Ctrl conditions
+  TAA_HFpEF <- subset(TAA.combined, Treatment == "HFpEF" & CellType == CELL)
+  TAA_Ctrl <- subset(TAA.combined, Treatment == "Ctrl" & CellType == CELL)
+  
+  # Recalculate SCT model to reset it
+  TAA_HFpEF <- SCTransform(TAA_HFpEF, verbose = TRUE, assay = "RNA", return.only.var.genes = FALSE)
+  TAA_Ctrl <- SCTransform(TAA_Ctrl, verbose = TRUE, assay = "RNA", return.only.var.genes = FALSE)
+
+  # Prepare the SCT assay for FindMarkers
+  TAA_HFpEF <- PrepSCTFindMarkers(TAA_HFpEF)
+  TAA_Ctrl <- PrepSCTFindMarkers(TAA_Ctrl)
+  
+  # Find DEGs between "N" and "J" in HFpEF
+  deg_HFpEF <- FindMarkers(TAA_HFpEF, ident.1 = "N", ident.2 = "J", group.by = "Background", logfc.threshold = 0, min.pct = 0.1)
+  deg_HFpEF_filtered <- deg_HFpEF %>% filter(p_val_adj < 0.05)  # Filter significant DEGs
+  deg_list_HFpEF[[CELL]] <- rownames(deg_HFpEF_filtered)  # Store significant DEGs
+  
+  # Find DEGs between "N" and "J" in Ctrl
+  deg_Ctrl <- FindMarkers(TAA_Ctrl, ident.1 = "N", ident.2 = "J", group.by = "Background", logfc.threshold = 0, min.pct = 0.1)
+  deg_Ctrl_filtered <- deg_Ctrl %>% filter(p_val_adj < 0.05)  # Filter significant DEGs
+  deg_list_Ctrl[[CELL]] <- rownames(deg_Ctrl_filtered)  # Store significant DEGs
+}
+
+# Create a combined DEG matrix for UpSet plotting
+deg_matrix_HFpEF <- data.frame(
+  gene = unique(unlist(deg_list_HFpEF)),  # Unique genes for HFpEF condition
+  stringsAsFactors = FALSE
+)
+
+deg_matrix_Ctrl <- data.frame(
+  gene = unique(unlist(deg_list_Ctrl)),  # Unique genes for Ctrl condition
+  stringsAsFactors = FALSE
+)
+
+# Add binary indicators for DEGs presence/absence in each cell type (HFpEF and Ctrl)
+for (cell_type in names(deg_list_HFpEF)) {
+  deg_matrix_HFpEF[[cell_type]] <- ifelse(deg_matrix_HFpEF$gene %in% deg_list_HFpEF[[cell_type]], 1, 0)
+}
+
+for (cell_type in names(deg_list_Ctrl)) {
+  deg_matrix_Ctrl[[cell_type]] <- ifelse(deg_matrix_Ctrl$gene %in% deg_list_Ctrl[[cell_type]], 1, 0)
+}
+
+# Define the order of cell types
+desired_order <- rev(c("Cardiomyocyte", "Fibroblast", "Mural_Cell", "EC", "Myeloid", "Lymphoid", "Mast_Cell", "Neural_Cell"))
+
+# Plot UpSet for HFpEF condition
+upset_HFpEF <- upset(deg_matrix_HFpEF, 
+      sets = desired_order, 
+      mb.ratio = c(0.4, 0.6),
+      keep.order = TRUE,  
+      main.bar.color = "#56B4E9",  
+      sets.bar.color = "#D55E00",  
+      order.by = "freq")  
+
+# Plot UpSet for Ctrl condition
+upset_Ctrl <- upset(deg_matrix_Ctrl, 
+      sets = desired_order, 
+      mb.ratio = c(0.4, 0.6),
+      keep.order = TRUE,  
+      main.bar.color = "#56B4E9",  
+      sets.bar.color = "#D55E00",  
+      order.by = "freq")
+
+# Save the plots as PDF
+pdf("../2_Output/UpSetR_HFpEF.pdf", height = 7, width = 7)
+print(upset_HFpEF)
+dev.off()
+
+pdf("../2_Output/UpSetR_Ctrl.pdf", height = 7, width = 7)
+print(upset_Ctrl)
+dev.off()
+
+# Load libraries
+library(clusterProfiler)
+library(org.Mm.eg.db)
+library(ggplot2)
+library(ReactomePA)
+deg_list <- list()
+for (CELL in cell_states) {
+  markers <- openxlsx::read.xlsx(paste0("./HFpEF_", CELL, "_DEGs.xlsx"), rowNames = T) %>% top_n(n = 1000, wt = abs(log2FoldChange))
+  markers <- markers[!is.na(rownames(markers)), ]
+  deg_list[[CELL]] <- rownames(markers[markers$pvalue < 0.05, ])  # Extract DEGs with p-value < 0.05
+}
+# Prepare DEG list (Example DEG list structure)
+common_genes <- Reduce(intersect, deg_list)
+# Convert gene symbols to Entrez IDs
+deg_list_entrez <- lapply(deg_list, function(genes) {
+  bitr(genes, fromType = "SYMBOL", toType = "ENTREZID", OrgDb = org.Mm.eg.db)$ENTREZID
+})
+# Perform Reactome pathway enrichment analysis for each cell type
+reactome_results <- lapply(deg_list_entrez, function(entrez_genes) {
+  enrichPathway(gene = entrez_genes, organism = "mouse", qvalueCutoff = 0.05)
+})
+# Assign cell type names
+names(reactome_results) <- names(deg_list)
+# Create a compareCluster object for Reactome pathway enrichment
+compare_cluster_results <- compareCluster(
+  geneCluster = deg_list_entrez,
+  fun = "enrichGO",
+  OrgDb = "org.Mm.eg.db",
+  # organism = "mm",
+  pvalueCutoff = 0.05
+)
+
+compare_cluster_results@compareClusterResult$cell_type <- compare_cluster_results@compareClusterResult$Cluster
+pdf("../2_Output/DotPlot_SPLIT.pdf", height = 4, width = 11)
+dotplot(compare_cluster_results, showCategory = 3, x = "GeneRatio", split = "cell_type", label_format = 50) +
+  facet_grid(. ~ cell_type) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.text.y = element_text(size = 10))
+dev.off()
+```
+
+# Cell-Cell Interactome
+
+This code initializes multiple analyses of cell-cell interactions, gene expression, and differential expression between cell types under different treatment conditions. Using LIANA for ligand-receptor interaction analysis of a seurat-generated single-cell dataset, we identify significant interactions, visualize these with heatmaps and chord diagrams, and plot the expression patterns of specific receptor genes across both Treatment (HFpEF vs Ctrl) and genetic background (N vs. J). Additionally, violin plots for expression patterns of multiple genes of interest are generated, with customized themes for better visual clarity. PDF files for each plot are saved to the specified directories.
+
+
+``` r
+library(Seurat)
+library(tidyverse)
+library(magrittr)
+library(liana)
+## Create Folder Structure
+ifelse(!dir.exists(file.path(paste0("../2_Output/Regulation/"))), 
+       dir.create(file.path(paste0("../2_Output/Regulation/"))), 
+       FALSE)
+# Import the seurat object
+TAA.combined <- readRDS(file = "../1_Input/NNT_Labelling_snRNA.rds")
+# Import the differentially-expressed genes based on HFpEF vs Ctrl in N mice
+DEGs <- openxlsx::read.xlsx("../2_Output/Cardiomyocyte/Cardiomyocyte_Venn.Diagram.xlsx", sheet = "N_ONLY_p05")$GeneName
+# Filter seurat object by the differentially-expressed genes
+TAA.combined_DEG <- subset(TAA.combined, features = DEGs)
+# Run LIANA for cell-type enrichment
+liana_TAA <- liana_wrap(TAA.combined_DEG, resource = "MouseConsensus")
+liana_TAA <- liana_aggregate(liana_TAA)
+liana_TAA %>%
+  liana_dotplot(source_groups = c("Cardiomyocyte"),
+                target_groups = c("Cardiomyocyte", "Fibroblast", "EC","Myeloid"),
+                ntop = 20)
+liana_trunc <- liana_TAA %>%  filter(cellphonedb.pvalue <= 0.05) # note that these pvals are already corrected
+heat_freq(liana_trunc) # heatmap
+pdf("../2_Output/Regulation/LIANA_Heatmap.pdf")
+heat_freq(liana_trunc) # heatmap
+dev.off()
+colors <- c(Cardiomyocyte = "coral2", 
+          EC = "wheat", 
+          Fibroblast = "steelblue4", 
+          Mural_Cell = "deepskyblue3",
+          Lymphoid = "azure4",
+          Myeloid = "goldenrod2", 
+          Mast_Cell = "tan2",
+          Neural_Cell = "darkcyan")
+# Load necessary libraries
+library(circlize)
+library(dplyr)
+library(ComplexHeatmap)
+#############################################################################################################
+TAA.combined_N.HFpEF <- subset(TAA.combined, subset = Background == "N" & Treatment == "HFpEF") #%>% subset(., features = DEGs)
+liana_TAA <- liana_wrap(TAA.combined_N.HFpEF, resource = "MouseConsensus")
+liana_TAA <- liana_aggregate(liana_TAA)
+liana_trunc <- liana_TAA %>%  filter(aggregate_rank <= 0.01) # note that these pvals are already corrected
+pdf("../2_Output/Regulation/CellCell_DotPlot_N.Ctrl_CM.targets.pdf", height = 7, width = 7)
+liana_TAA %>%
+  liana_dotplot(source_groups = c("Cardiomyocyte"),
+                target_groups = c("Cardiomyocyte", "Fibroblast", "EC", "Mural_Cell", "Myeloid", "Lymphoid", "Mast_Cell", "Neural_Cell"),
+                ntop = 20) + theme(axis.text.x = element_text(size = 10, angle = 45, hjust = 1), plot.title = element_text(size = 0), axis.title.x = element_text(size = 0))
+dev.off()
+#############################################
+# Load necessary libraries
+library(dplyr)
+library(circlize)
+# Filter interactions for the ligand Fgf13 from the filtered liana_trunc object
+ligand_of_interest <- "Edn1"
+fgf13_targets <- liana_trunc %>%
+    filter(ligand.complex == ligand_of_interest) %>%
+    select(ligand.complex, receptor.complex, source, target) %>%
+    distinct()  %>%
+    group_by(target) %>%
+    mutate(receptor_position = dense_rank(paste(ligand.complex, receptor.complex, target, sep = "-"))) %>%
+    ungroup()
+
+# Define unique cell types
+source_types <- unique(c(fgf13_targets$target,fgf13_targets$source))
+source_types <- factor(source_types)
+# Define colors for each cell type
+grid.col <- c(
+    Cardiomyocyte = "coral2", 
+    EC = "wheat", 
+    Fibroblast = "steelblue4", 
+    Mural_Cell = "deepskyblue3",
+    Lymphoid = "azure4",
+    Myeloid = "goldenrod2", 
+    Mast_Cell = "tan2",
+    Neural_Cell = "darkcyan"
+)
+
+# Map each cell type to the maximum number of receptors within it
+receptor_counts <- fgf13_targets %>% select(target,receptor.complex) %>% distinct() %>%
+    group_by(target) %>%
+    summarise(count = n())
+source_counts <- fgf13_targets %>%
+    filter(!(source %in% target)) %>%
+    select(source) %>%
+    distinct() %>%
+    group_by(source) %>%
+    mutate(count = 1) %>% distinct() # Add 1 to count the source
+# Join the calculated counts back into the original fgf13_targets data frame
+fgf13_targets <- dplyr::inner_join(fgf13_targets, receptor_counts)
+# Define sector widths based on receptor counts per cell type
+sector_widths <- setNames(c(receptor_counts$count, source_counts$count), c(receptor_counts$target, source_counts$source))
+
+### Receptor Targets
+pdf(paste0("../2_Output/Regulation/", ligand_of_interest, "_targets.pdf"), height = 5, width = 6)
+# Initialize circos plot with main cell type sectors
+circos.clear()
+circos.par(gap.degree = 5)
+
+# Initialize main sectors for each cell type with custom widths
+circos.initialize(factors = source_types, xlim = cbind(rep(0, length(sector_widths)), sector_widths))
+# Add an outer track with cell type names on the border
+circos.trackPlotRegion(factors = source_types, ylim = c(0, 1), bg.border = NA, track.height = 0.05, 
+                       panel.fun = function(x, y) {
+    cell_type <- CELL_META$sector.index
+    circos.text(CELL_META$xcenter, 1, cell_type, facing = "bending.outside", niceFacing = TRUE, 
+                adj = c(0.5, 1), cex = 0.8, col = "black")
+})
+# Draw colored boxes for each cell type sector and receptor sub-sectors
+circos.trackPlotRegion(factors = source_types, ylim = c(0, 1), panel.fun = function(x, y) {
+    source_types <- CELL_META$sector.index
+    cell_color <- grid.col[source_types]
+    receptors <- fgf13_targets %>% filter(target == source_types) %>% pull(receptor.complex)
+    receptor_positions <- fgf13_targets %>% filter(target == source_types) %>% pull(receptor_position)
+    
+    # Draw cell type background
+    circos.rect(CELL_META$xlim[1], 0, CELL_META$xlim[2], 1, col = cell_color, border = "black")
+    
+    # Add receptor names evenly spaced within each cell type sector
+    for (j in seq_along(receptors)) {
+        pos <- CELL_META$xlim[1] + receptor_positions[j] - 1
+        circos.text(pos + 0.5, 0.5, receptors[j], facing = "bending.inside", niceFacing = TRUE, adj = c(0.5, 1), cex = 0.5)
+    }
+}, track.height = 0.15, bg.border = NA)
+###
+unique_sources <- unique(fgf13_targets$source)
+for (source in unique_sources) {
+    source_links <- fgf13_targets %>% filter(source == !!source)
+    
+    apply(source_links, 1, function(row) {
+        target <- row["target"]
+        receptor_position <- as.numeric(row["receptor_position"])  # Ensure numeric type for calculation
+        
+        # Calculate the exact position within the target sector
+        target_pos <- receptor_position - 0.5
+        
+        # Draw the link with specified color and line width
+        circos.link(sector.index1 = source, point1 = 0-0.2, 
+                    sector.index2 = target, point2 = target_pos, 
+                    col = grid.col[source], lwd = 2)
+    })
+}
+# Add a title to the plot
+mtext(paste0(ligand_of_interest, " Receptor Interactions"), side = 3, line = -1, outer = TRUE, cex = 1, font = 2)
+dev.off()
+circos.clear()
+########################
+## Fgf1 targets
+# Create the UMAP plot with Fgf1 expression
+pdf(paste0("../2_Output/Regulation/Ligand_", ligand_of_interest, "_umap.pdf"), height = 4, width = 4)
+FeaturePlot(TAA.combined, features = ligand_of_interest, reduction = "umap", cols = c("darkgray","white", "firebrick4"), alpha = 0.7) +
+  ggtitle(paste0(ligand_of_interest," Expression")) +
+  theme(plot.title = element_text(hjust = 0.5))
+dev.off()
+# Create composive Fgf1 target score using the downstream genes identified via cell-cell interactome
+genes_vector <- unique(fgf13_targets$receptor.complex)
+gene_list <- genes_vector[genes_vector %in% rownames(TAA.combined)] 
+gene_expr <- GetAssayData(object = TAA.combined, slot = "data")[gene_list, ]
+sum_expr <- colSums(gene_expr)
+TAA.combined$Fgf1_score <- scale(sum_expr)
+# plot composite targets score
+# Load necessary libraries
+pdf(paste0("../2_Output/Regulation/Target_score_", ligand_of_interest, "_umap.pdf"), height = 4, width = 4)
+FeaturePlot(TAA.combined, features = "Fgf1_score", reduction = "umap") +
+  scale_color_gradient2(
+    low = "dodgerblue3", mid = "white", high = "firebrick4", 
+    midpoint = 0,   # Center the color scale at 0
+    limits = c(min(TAA.combined[["Fgf1_score"]]), max(TAA.combined[["Fgf1_score"]]))  # Adjust limits to match data range
+  ) +
+  ggtitle(paste0(ligand_of_interest," Target Score")) +
+  theme(plot.title = element_text(hjust = 0.5))
+dev.off()
+library(Nebulosa)
+pdf(paste0("../2_Output/Regulation/Target_score_", ligand_of_interest, "_density.pdf"), height = 4, width = 4)
+plot_density(TAA.combined, gene_list, reduction = "umap", joint = TRUE, combine = FALSE, pal = "magma")
+dev.off()
+
+#######
+gene_of_interest <- c("Scn5a", "Fgfr1","Fgfr2", "Egfr")
+# Generate individual violin plots for each gene and store them in a list
+vln_plots <- lapply(gene_of_interest, function(gene) {
+    VlnPlot(
+        TAA.combined,
+        features = gene,
+        group.by = "CellType",
+        split.by = "Treatment",
+        adjust = 3,
+        pt.size = 0
+    ) +
+    theme(
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.title.y = element_blank(),  # Remove Y-axis label for individual plots
+        legend.position = "none"         # Remove individual legends
+    ) +
+    labs(title = gene)  + # Title for each gene plot 
+    xlab(NULL)  # Remove the x-axis label
+})
+
+# Combine the plots using patchwork
+combined_plot <- wrap_plots(vln_plots, ncol = 4) +
+    plot_layout(guides = "collect") &  # Collect legends into one
+    plot_annotation(
+        title = "Expression of Fgf1/13 and downstream Targets",
+        theme = theme(
+            plot.title = element_text(hjust = 0.5)
+        )
+    ) &
+    theme(legend.position = "right")   # Position the legend at the bottom
+
+# Adjust the layout to add a Y-axis label closer to the plots
+combined_plot_with_ylabel <- wrap_elements(
+    grid::textGrob("Expression Level", rot = 90, gp = gpar(cex = 1.2))
+) + 
+plot_spacer() +  # Minimal spacing
+combined_plot + 
+plot_layout(widths = c(0.02, 0.005, 1))  # Further reduced widths for tighter spacing
+
+# Display the final combined plot
+pdf("../2_Output/Regulation/Violin_Fgf13.targets.pdf", width = 12, height = 3.3)
+combined_plot_with_ylabel
+dev.off()
+#############################################
+# Aggregate the interactions to create a single weight for each source-target pair
+liana_data_aggregated <- liana_trunc %>%
+  mutate(weight = -log10(aggregate_rank)) %>%  # Transform rank for better visualization
+  group_by(source, target) %>%
+  summarise(weight = sum(weight, na.rm = TRUE)) %>%
+  ungroup() %>%
+  filter(!is.infinite(weight) & weight > 0)  # Remove infinite or zero weights
+# Convert the tibble into a data frame for `circlize::chordDiagram()`
+liana_data_aggregated <- as.data.frame(liana_data_aggregated)
+# Save the plot to a PDF
+pdf(file = "../2_Output/Regulation/CellCell_Chord_N.HFpEF.pdf", height = 6, width = 9)
+# Load necessary libraries
+library(circlize)
+library(ComplexHeatmap)
+# Define colors for each cell type (adjust colors as needed)
+grid.col <- c(Cardiomyocyte = "coral2", 
+          EC = "wheat", 
+          Fibroblast = "steelblue4", 
+          Mural_Cell = "deepskyblue3",
+          Lymphoid = "azure4",
+          Myeloid = "goldenrod2", 
+          Mast_Cell = "tan2",
+          Neural_Cell = "darkcyan")
+# Create the chord diagram with the consolidated weights
+circlize::chordDiagram(
+  x = liana_data_aggregated,
+  grid.col = grid.col,
+  transparency = 0.5,          # Adjust transparency for better visibility
+  directional = 1,             # Show directional arrows
+  direction.type = c("diffHeight", "arrows"),
+  link.arr.type = "big.arrow", # Different heights and arrows to indicate direction
+  annotationTrack = "grid",    # Add annotation tracks for labels
+  preAllocateTracks = list(track.height = 0.1)  # Adjust space for labels
+)
+# Add cell type labels with more space (adjust for aesthetics if needed)
+circlize::circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
+  # Adjust the y position to increase distance from the segment
+  circos.text(
+    CELL_META$xcenter, CELL_META$ylim[1] + 0.3, CELL_META$sector.index, 
+    facing = "bending",  # Align labels with their segment
+    niceFacing = TRUE,   # Ensure labels are readable
+    adj = c(0.5, 0.5)    # Center the text on the sector
+  )
+}, bg.border = NA)
+# Create a legend using ComplexHeatmap
+legend <- ComplexHeatmap::Legend(
+  at = names(grid.col), 
+  title = "Cell Type", 
+  legend_gp = gpar(fill = grid.col)
+)
+# Draw the legend
+ComplexHeatmap::draw(legend, x = unit(1, "npc") - unit(5, "mm"), just = "right")
+# Close the PDF device
+dev.off()
+################
+## Dotplot of target expression
+library(scCustomize)
+pdf(file = "../2_Output/Regulation/Dot.plot_top5markers.pdf", height = 10, width = 7)
+Clustered_DotPlot(seurat_object = TAA.combined, split.by = "CellType", group.by = "Treatment",features = gene_list, assay = "RNA")
+dev.off()
+
+# Load required packages
+library(Seurat)
+library(ggplot2)
+
+# Define the list of receptor genes
+receptor_genes <- c("Fgfr1", "Fgfr2", "Egfr", "Scn5a")  # Replace with your receptor genes
+
+# Generate the dot plot
+# Generate the dot plot with adjustments
+DotPlot(TAA.combined, features = receptor_genes, group.by = "CellType", split.by = "Treatment") + 
+    # scale_color_gradientn(colors = colorRampPalette(c("dodgerblue4", "white", "goldenrod1"))(20)) +  # Custom color scale
+    facet_wrap(~ "Background", ncol = 1) +  # Facet by Background variable
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    labs(title = "Receptor Gene Expression Across Cell Types", x = "Receptor Genes", y = "Cell Types")
+
+#########################################################################
+# N - Ctrl
+TAA.combined_N.Ctrl <- subset(TAA.combined, subset = Background == "N" & Treatment == "Ctrl")
+liana_TAA <- liana_wrap(TAA.combined_N.Ctrl, resource = "MouseConsensus")
+liana_TAA <- liana_aggregate(liana_TAA)
+liana_trunc <- liana_TAA %>%  filter(aggregate_rank <= 0.01) # note that these pvals are already corrected
+### Interaction DotPlot
+pdf("../2_Output/Regulation/CellCell_DotPlot_N.Ctrl_CM.targets.pdf", height = 7, width = 7)
+liana_TAA %>%
+  liana_dotplot(source_groups = c("Cardiomyocyte"),
+                target_groups = c("Cardiomyocyte", "Fibroblast", "EC", "Mural_Cell", "Myeloid", "Lymphoid", "Mast_Cell", "Neural_Cell"),
+                ntop = 20) + theme(axis.text.x = element_text(size = 10, angle = 45, hjust = 1), plot.title = element_text(size = 0), axis.title.x = element_text(size = 0))
+dev.off()
+# Aggregate the interactions to create a single weight for each source-target pair
+liana_data_aggregated <- liana_trunc %>%
+  mutate(weight = -log10(aggregate_rank)) %>%  # Transform rank for better visualization
+  group_by(source, target) %>%
+  summarise(weight = sum(weight, na.rm = TRUE)) %>%
+  ungroup() %>%
+  filter(!is.infinite(weight) & weight > 0)  # Remove infinite or zero weights
+# Convert the tibble into a data frame for `circlize::chordDiagram()`
+liana_data_aggregated <- as.data.frame(liana_data_aggregated)
+# Save the plot to a PDF
+pdf(file = "../2_Output/CellCell_Chord_N.Ctrl.pdf", height = 6, width = 9)
+# Load necessary libraries
+library(circlize)
+library(ComplexHeatmap)
+# Define colors for each cell type (adjust colors as needed)
+grid.col <- c(Cardiomyocyte = "coral2", 
+          EC = "wheat", 
+          Fibroblast = "steelblue4", 
+          Mural_Cell = "deepskyblue3",
+          Lymphoid = "azure4",
+          Myeloid = "goldenrod2", 
+          Mast_Cell = "tan2",
+          Neural_Cell = "darkcyan")
+# Create the chord diagram with the consolidated weights
+circlize::chordDiagram(
+  x = liana_data_aggregated,
+  grid.col = grid.col,
+  transparency = 0.5,          # Adjust transparency for better visibility
+  directional = 1,             # Show directional arrows
+  direction.type = c("diffHeight", "arrows"),
+  link.arr.type = "big.arrow", # Different heights and arrows to indicate direction
+  annotationTrack = "grid",    # Add annotation tracks for labels
+  preAllocateTracks = list(track.height = 0.1)  # Adjust space for labels
+)
+# Add cell type labels with more space (adjust for aesthetics if needed)
+circlize::circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
+  # Adjust the y position to increase distance from the segment
+  circos.text(
+    CELL_META$xcenter, CELL_META$ylim[1] + 0.3, CELL_META$sector.index, 
+    facing = "bending",  # Align labels with their segment
+    niceFacing = TRUE,   # Ensure labels are readable
+    adj = c(0.5, 0.5)    # Center the text on the sector
+  )
+}, bg.border = NA)
+# Create a legend using ComplexHeatmap
+legend <- ComplexHeatmap::Legend(
+  at = names(grid.col), 
+  title = "Cell Type", 
+  legend_gp = gpar(fill = grid.col)
+)
+# Draw the legend
+ComplexHeatmap::draw(legend, x = unit(1, "npc") - unit(5, "mm"), just = "right")
+# Close the PDF device
+dev.off()
+#####################################################################
+# J - Ctrl
+TAA.combined_N.Ctrl <- subset(TAA.combined, subset = Background == "J" & Treatment == "Ctrl")
+liana_TAA <- liana_wrap(TAA.combined_N.Ctrl, resource = "MouseConsensus")
+liana_TAA <- liana_aggregate(liana_TAA)
+liana_trunc <- liana_TAA %>%  filter(aggregate_rank <= 0.01) # note that these pvals are already corrected
+## Interaction DotPlot
+pdf("../2_Output/CellCell_DotPlot_J.Ctrl_CM.targets.pdf", height = 7, width = 7)
+liana_TAA %>%
+  liana_dotplot(source_groups = c("Cardiomyocyte"),
+                target_groups = c("Cardiomyocyte", "Fibroblast", "EC", "Mural_Cell", "Myeloid", "Lymphoid", "Mast_Cell", "Neural_Cell"),
+                ntop = 20) + theme(axis.text.x = element_text(size = 10, angle = 45, hjust = 1), plot.title = element_text(size = 0), axis.title.x = element_text(size = 0))
+dev.off()
+# Aggregate the interactions to create a single weight for each source-target pair
+liana_data_aggregated <- liana_trunc %>%
+  mutate(weight = -log10(aggregate_rank)) %>%  # Transform rank for better visualization
+  group_by(source, target) %>%
+  summarise(weight = sum(weight, na.rm = TRUE)) %>%
+  ungroup() %>%
+  filter(!is.infinite(weight) & weight > 0)  # Remove infinite or zero weights
+# Convert the tibble into a data frame for `circlize::chordDiagram()`
+liana_data_aggregated <- as.data.frame(liana_data_aggregated)
+# Save the plot to a PDF
+pdf(file = "../2_Output/CellCell_Chord_J.Ctrl.pdf", height = 6, width = 9)
+# Load necessary libraries
+library(circlize)
+library(ComplexHeatmap)
+# Define colors for each cell type (adjust colors as needed)
+grid.col <- c(Cardiomyocyte = "coral2", 
+          EC = "wheat", 
+          Fibroblast = "steelblue4", 
+          Mural_Cell = "deepskyblue3",
+          Lymphoid = "azure4",
+          Myeloid = "goldenrod2", 
+          Mast_Cell = "tan2",
+          Neural_Cell = "darkcyan")
+# Create the chord diagram with the consolidated weights
+circlize::chordDiagram(
+  x = liana_data_aggregated,
+  grid.col = grid.col,
+  transparency = 0.5,          # Adjust transparency for better visibility
+  directional = 1,             # Show directional arrows
+  direction.type = c("diffHeight", "arrows"),
+  link.arr.type = "big.arrow", # Different heights and arrows to indicate direction
+  annotationTrack = "grid",    # Add annotation tracks for labels
+  preAllocateTracks = list(track.height = 0.1)  # Adjust space for labels
+)
+# Add cell type labels with more space (adjust for aesthetics if needed)
+circlize::circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
+  # Adjust the y position to increase distance from the segment
+  circos.text(
+    CELL_META$xcenter, CELL_META$ylim[1] + 0.3, CELL_META$sector.index, 
+    facing = "bending",  # Align labels with their segment
+    niceFacing = TRUE,   # Ensure labels are readable
+    adj = c(0.5, 0.5)    # Center the text on the sector
+  )
+}, bg.border = NA)
+# Create a legend using ComplexHeatmap
+legend <- ComplexHeatmap::Legend(
+  at = names(grid.col), 
+  title = "Cell Type", 
+  legend_gp = gpar(fill = grid.col)
+)
+# Draw the legend
+ComplexHeatmap::draw(legend, x = unit(1, "npc") - unit(5, "mm"), just = "right")
+# Close the PDF device
+dev.off()
+###############################################################
+# J - HFpEF
+TAA.combined_N.Ctrl <- subset(TAA.combined, subset = Background == "J" & Treatment == "HFpEF")
+liana_TAA <- liana_wrap(TAA.combined_N.Ctrl, resource = "MouseConsensus")
+liana_TAA <- liana_aggregate(liana_TAA)
+liana_trunc <- liana_TAA %>%  filter(aggregate_rank <= 0.01) # note that these pvals are already corrected
+# Interaction DotPLot
+pdf("../2_Output/CellCell_DotPlot_J.HFpEF_CM.targets.pdf", height = 6, width = 7)
+liana_TAA %>%
+  liana_dotplot(source_groups = c("Cardiomyocyte"),
+                target_groups = c("Cardiomyocyte", "Fibroblast", "EC", "Mural_Cell", "Myeloid", "Lymphoid", "Mast_Cell", "Neural_Cell"),
+                ntop = 20) + theme(axis.text.x = element_text(size = 12, angle = 45, hjust = 1), axis.text.y = element_text(size = 12), axis.title.y = element_text(size = 12, face = "bold"), plot.title = element_text(size = 0), axis.title.x = element_text(size = 0))
+dev.off()
+# Aggregate the interactions to create a single weight for each source-target pair
+liana_data_aggregated <- liana_trunc %>%
+  mutate(weight = -log10(aggregate_rank)) %>%  # Transform rank for better visualization
+  group_by(source, target) %>%
+  summarise(weight = sum(weight, na.rm = TRUE)) %>%
+  ungroup() %>%
+  filter(!is.infinite(weight) & weight > 0)  # Remove infinite or zero weights
+# Convert the tibble into a data frame for `circlize::chordDiagram()`
+liana_data_aggregated <- as.data.frame(liana_data_aggregated)
+# Save the plot to a PDF
+pdf(file = "../2_Output/CellCell_Chord_J.HFpEF.pdf", height = 6, width = 9)
+# Load necessary libraries
+library(circlize)
+library(ComplexHeatmap)
+# Define colors for each cell type (adjust colors as needed)
+grid.col <- c(Cardiomyocyte = "coral2", 
+          EC = "wheat", 
+          Fibroblast = "steelblue4", 
+          Mural_Cell = "deepskyblue3",
+          Lymphoid = "azure4",
+          Myeloid = "goldenrod2", 
+          Mast_Cell = "tan2",
+          Neural_Cell = "darkcyan")
+# Create the chord diagram with the consolidated weights
+circlize::chordDiagram(
+  x = liana_data_aggregated,
+  grid.col = grid.col,
+  transparency = 0.5,          # Adjust transparency for better visibility
+  directional = 1,             # Show directional arrows
+  direction.type = c("diffHeight", "arrows"),
+  link.arr.type = "big.arrow", # Different heights and arrows to indicate direction
+  annotationTrack = "grid",    # Add annotation tracks for labels
+  preAllocateTracks = list(track.height = 0.1)  # Adjust space for labels
+)
+# Add cell type labels with more space (adjust for aesthetics if needed)
+circlize::circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
+  # Adjust the y position to increase distance from the segment
+  circos.text(
+    CELL_META$xcenter, CELL_META$ylim[1] + 0.3, CELL_META$sector.index, 
+    facing = "bending",  # Align labels with their segment
+    niceFacing = TRUE,   # Ensure labels are readable
+    adj = c(0.5, 0.5)    # Center the text on the sector
+  )
+}, bg.border = NA)
+# Create a legend using ComplexHeatmap
+legend <- ComplexHeatmap::Legend(
+  at = names(grid.col), 
+  title = "Cell Type", 
+  legend_gp = gpar(fill = grid.col)
+)
+# Draw the legend
+ComplexHeatmap::draw(legend, x = unit(1, "npc") - unit(5, "mm"), just = "right")
+# Close the PDF device
+dev.off()
+```
+
+
 # Cardiomyocyte-Specific Cell State Transition
 
 Trajectory analysis was employed to characterize the phenotypic shifts
@@ -1555,1859 +2181,27 @@ makeShinyApp(
 
 
 ``` r
-end_time <- Sys.time()
-# execution_time <- end_time - start_time
-sinfo<-devtools::session_info()
-sinfo$platform
+library(devtools)
+library(DT)
+
+# Capture the session information
+sinfo <- session_info()
+
+# Create an interactive table of the packages data
+datatable(
+  sinfo$packages,  # Display session information about packages
+  options = list(
+    pageLength = 10,  # Show 10 entries per page
+    autoWidth = TRUE,
+    searching = TRUE,
+    ordering = TRUE,
+    dom = 'lfrtip'  # Length, filter, pagination controls
+  ),
+  rownames = FALSE
+)
 ```
 
+```{=html}
+<div class="datatables html-widget html-fill-item" id="htmlwidget-39b76fb009bac3deb2d8" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-39b76fb009bac3deb2d8">{"x":{"filter":"none","vertical":false,"data":[["bslib","cachem","cli","colorspace","devtools","digest","DT","ellipsis","evaluate","fastmap","fs","glue","htmltools","htmlwidgets","httpuv","jquerylib","jsonlite","kableExtra","knitr","later","lifecycle","magrittr","memoise","mime","miniUI","munsell","pkgbuild","pkgload","profvis","promises","purrr","R6","Rcpp","remotes","rlang","rmarkdown","rstudioapi","sass","scales","sessioninfo","shiny","stringi","stringr","svglite","systemfonts","urlchecker","usethis","vctrs","viridisLite","xfun","xml2","xtable","yaml"],["0.8.0","1.1.0","3.6.3","2.1.1","2.4.5","0.6.37","0.33","0.3.2","1.0.0","1.2.0","1.6.4","1.8.0","0.5.8.1","1.6.4","1.6.15","0.1.4","1.8.9","1.4.0","1.48","1.3.2","1.0.4","2.0.3","2.0.1","0.12","0.1.1.1","0.5.1","1.4.4","1.4.0","0.4.0","1.3.0","1.0.2","2.5.1","1.0.13","2.5.0","1.1.4","2.28","0.16.0","0.4.9","1.3.0","1.2.2","1.9.1","1.8.4","1.5.1","2.1.3","1.1.0","1.0.1","3.0.0","0.6.5","0.4.2","0.47","1.3.6","1.8.4","2.3.10"],["0.8.0","1.1.0","3.6.3","2.1-1","2.4.5","0.6.37","0.33","0.3.2","1.0.0","1.2.0","1.6.4","1.8.0","0.5.8.1","1.6.4","1.6.15","0.1.4","1.8.9","1.4.0","1.48","1.3.2","1.0.4","2.0.3","2.0.1","0.12","0.1.1.1","0.5.1","1.4.4","1.4.0","0.4.0","1.3.0","1.0.2","2.5.1","1.0.13","2.5.0","1.1.4","2.28","0.16.0","0.4.9","1.3.0","1.2.2","1.9.1","1.8.4","1.5.1","2.1.3","1.1.0","1.0.1","3.0.0","0.6.5","0.4.2","0.47","1.3.6","1.8-4","2.3.10"],["/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/bslib","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/cachem","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/cli","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/colorspace","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/devtools","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/digest","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/DT","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ellipsis","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/evaluate","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/fastmap","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/fs","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/glue","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/htmltools","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/htmlwidgets","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/httpuv","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/jquerylib","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/jsonlite","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/kableExtra","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/knitr","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/later","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/lifecycle","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/magrittr","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/memoise","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/mime","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/miniUI","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/munsell","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/pkgbuild","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/pkgload","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/profvis","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/promises","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/purrr","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/R6","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/remotes","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/rlang","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/rmarkdown","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/rstudioapi","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/sass","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/scales","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/sessioninfo","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/shiny","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/stringi","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/stringr","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/svglite","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/systemfonts","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/urlchecker","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/usethis","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/vctrs","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/viridisLite","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/xfun","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/xml2","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/xtable","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/yaml"],["/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/bslib","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/cachem","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/cli","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/colorspace","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/devtools","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/digest","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/DT","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ellipsis","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/evaluate","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/fastmap","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/fs","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/glue","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/htmltools","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/htmlwidgets","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/httpuv","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/jquerylib","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/jsonlite","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/kableExtra","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/knitr","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/later","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/lifecycle","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/magrittr","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/memoise","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/mime","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/miniUI","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/munsell","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/pkgbuild","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/pkgload","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/profvis","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/promises","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/purrr","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/R6","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/remotes","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/rlang","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/rmarkdown","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/rstudioapi","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/sass","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/scales","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/sessioninfo","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/shiny","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/stringi","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/stringr","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/svglite","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/systemfonts","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/urlchecker","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/usethis","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/vctrs","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/viridisLite","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/xfun","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/xml2","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/xtable","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/yaml"],[false,false,false,false,true,false,true,false,false,false,false,false,false,false,false,false,false,true,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false],[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],["2024-07-29","2024-05-16","2024-06-21","2024-07-26","2022-10-11","2024-08-19","2024-04-04","2021-04-29","2024-09-17","2024-05-15","2024-04-25","2024-09-30","2024-04-04","2023-12-06","2024-03-26","2021-04-26","2024-09-20","2024-01-24","2024-07-07","2023-12-06","2023-11-07","2022-03-30","2021-11-26","2021-09-28","2018-05-18","2024-04-01","2024-03-17","2024-06-28","2024-09-20","2024-04-05","2023-08-10","2021-08-19","2024-07-17","2024-03-17","2024-06-04","2024-08-17","2024-03-24","2024-03-15","2023-11-28","2021-12-06","2024-08-01","2024-05-06","2023-11-14","2023-12-08","2024-05-15","2021-11-30","2024-07-29","2023-12-01","2023-05-02","2024-08-17","2023-12-04","2019-04-21","2024-07-26"],["CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.1)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.1)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.1)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.1)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.1)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)","CRAN (R 4.4.0)"],[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],["/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library","/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>package<\/th>\n      <th>ondiskversion<\/th>\n      <th>loadedversion<\/th>\n      <th>path<\/th>\n      <th>loadedpath<\/th>\n      <th>attached<\/th>\n      <th>is_base<\/th>\n      <th>date<\/th>\n      <th>source<\/th>\n      <th>md5ok<\/th>\n      <th>library<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":10,"autoWidth":true,"searching":true,"ordering":true,"dom":"lfrtip","columnDefs":[{"name":"package","targets":0},{"name":"ondiskversion","targets":1},{"name":"loadedversion","targets":2},{"name":"path","targets":3},{"name":"loadedpath","targets":4},{"name":"attached","targets":5},{"name":"is_base","targets":6},{"name":"date","targets":7},{"name":"source","targets":8},{"name":"md5ok","targets":9},{"name":"library","targets":10}],"order":[],"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":[],"jsHooks":[]}</script>
 ```
-##  setting  value
-##  version  R version 4.4.1 (2024-06-14)
-##  os       macOS Sonoma 14.6.1
-##  system   aarch64, darwin20
-##  ui       X11
-##  language (EN)
-##  collate  en_US.UTF-8
-##  ctype    en_US.UTF-8
-##  tz       America/Los_Angeles
-##  date     2024-10-11
-##  pandoc   3.2 @ /Applications/RStudio.app/Contents/Resources/app/quarto/bin/tools/aarch64/ (via rmarkdown)
-```
-
-``` r
-sinfo$packages %>% kable( 
-                         align="c", 
-                         longtable=T, 
-                         booktabs=T,
-                         caption="Packages and Required Dependencies") %>% 
-    kable_styling(latex_options=c("striped", "repeat_header", "condensed"))
-```
-
-<table class="table" style="margin-left: auto; margin-right: auto;">
-<caption>Packages and Required Dependencies</caption>
- <thead>
-  <tr>
-   <th style="text-align:left;">  </th>
-   <th style="text-align:center;"> package </th>
-   <th style="text-align:center;"> ondiskversion </th>
-   <th style="text-align:center;"> loadedversion </th>
-   <th style="text-align:center;"> path </th>
-   <th style="text-align:center;"> loadedpath </th>
-   <th style="text-align:center;"> attached </th>
-   <th style="text-align:center;"> is_base </th>
-   <th style="text-align:center;"> date </th>
-   <th style="text-align:center;"> source </th>
-   <th style="text-align:center;"> md5ok </th>
-   <th style="text-align:center;"> library </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;"> abind </td>
-   <td style="text-align:center;"> abind </td>
-   <td style="text-align:center;"> 1.4.8 </td>
-   <td style="text-align:center;"> 1.4-8 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/abind </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/abind </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-09-12 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> bslib </td>
-   <td style="text-align:center;"> bslib </td>
-   <td style="text-align:center;"> 0.8.0 </td>
-   <td style="text-align:center;"> 0.8.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/bslib </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/bslib </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-07-29 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> cachem </td>
-   <td style="text-align:center;"> cachem </td>
-   <td style="text-align:center;"> 1.1.0 </td>
-   <td style="text-align:center;"> 1.1.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/cachem </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/cachem </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-05-16 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> cli </td>
-   <td style="text-align:center;"> cli </td>
-   <td style="text-align:center;"> 3.6.3 </td>
-   <td style="text-align:center;"> 3.6.3 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/cli </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/cli </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-06-21 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> cluster </td>
-   <td style="text-align:center;"> cluster </td>
-   <td style="text-align:center;"> 2.1.6 </td>
-   <td style="text-align:center;"> 2.1.6 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/cluster </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/cluster </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-12-01 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> codetools </td>
-   <td style="text-align:center;"> codetools </td>
-   <td style="text-align:center;"> 0.2.20 </td>
-   <td style="text-align:center;"> 0.2-20 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/codetools </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/codetools </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-03-31 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> colorspace </td>
-   <td style="text-align:center;"> colorspace </td>
-   <td style="text-align:center;"> 2.1.1 </td>
-   <td style="text-align:center;"> 2.1-1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/colorspace </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/colorspace </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-07-26 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> cowplot </td>
-   <td style="text-align:center;"> cowplot </td>
-   <td style="text-align:center;"> 1.1.3 </td>
-   <td style="text-align:center;"> 1.1.3 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/cowplot </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/cowplot </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-01-22 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> data.table </td>
-   <td style="text-align:center;"> data.table </td>
-   <td style="text-align:center;"> 1.16.0 </td>
-   <td style="text-align:center;"> 1.16.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/data.table </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/data.table </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-08-27 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> deldir </td>
-   <td style="text-align:center;"> deldir </td>
-   <td style="text-align:center;"> 2.0.4 </td>
-   <td style="text-align:center;"> 2.0-4 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/deldir </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/deldir </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-02-28 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> devtools </td>
-   <td style="text-align:center;"> devtools </td>
-   <td style="text-align:center;"> 2.4.5 </td>
-   <td style="text-align:center;"> 2.4.5 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/devtools </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/devtools </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2022-10-11 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> digest </td>
-   <td style="text-align:center;"> digest </td>
-   <td style="text-align:center;"> 0.6.37 </td>
-   <td style="text-align:center;"> 0.6.37 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/digest </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/digest </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-08-19 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> dotCall64 </td>
-   <td style="text-align:center;"> dotCall64 </td>
-   <td style="text-align:center;"> 1.1.1 </td>
-   <td style="text-align:center;"> 1.1-1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/dotCall64 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/dotCall64 </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-11-28 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> dplyr </td>
-   <td style="text-align:center;"> dplyr </td>
-   <td style="text-align:center;"> 1.1.4 </td>
-   <td style="text-align:center;"> 1.1.4 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/dplyr </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/dplyr </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-11-17 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> ellipsis </td>
-   <td style="text-align:center;"> ellipsis </td>
-   <td style="text-align:center;"> 0.3.2 </td>
-   <td style="text-align:center;"> 0.3.2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ellipsis </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ellipsis </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2021-04-29 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> evaluate </td>
-   <td style="text-align:center;"> evaluate </td>
-   <td style="text-align:center;"> 1.0.0 </td>
-   <td style="text-align:center;"> 1.0.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/evaluate </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/evaluate </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-09-17 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> fansi </td>
-   <td style="text-align:center;"> fansi </td>
-   <td style="text-align:center;"> 1.0.6 </td>
-   <td style="text-align:center;"> 1.0.6 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/fansi </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/fansi </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-12-08 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> farver </td>
-   <td style="text-align:center;"> farver </td>
-   <td style="text-align:center;"> 2.1.2 </td>
-   <td style="text-align:center;"> 2.1.2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/farver </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/farver </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-05-13 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> fastDummies </td>
-   <td style="text-align:center;"> fastDummies </td>
-   <td style="text-align:center;"> 1.7.4 </td>
-   <td style="text-align:center;"> 1.7.4 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/fastDummies </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/fastDummies </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-08-16 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> fastmap </td>
-   <td style="text-align:center;"> fastmap </td>
-   <td style="text-align:center;"> 1.2.0 </td>
-   <td style="text-align:center;"> 1.2.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/fastmap </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/fastmap </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-05-15 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> fitdistrplus </td>
-   <td style="text-align:center;"> fitdistrplus </td>
-   <td style="text-align:center;"> 1.2.1 </td>
-   <td style="text-align:center;"> 1.2-1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/fitdistrplus </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/fitdistrplus </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-07-12 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> fs </td>
-   <td style="text-align:center;"> fs </td>
-   <td style="text-align:center;"> 1.6.4 </td>
-   <td style="text-align:center;"> 1.6.4 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/fs </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/fs </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-04-25 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> future </td>
-   <td style="text-align:center;"> future </td>
-   <td style="text-align:center;"> 1.34.0 </td>
-   <td style="text-align:center;"> 1.34.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/future </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/future </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-07-29 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> future.apply </td>
-   <td style="text-align:center;"> future.apply </td>
-   <td style="text-align:center;"> 1.11.2 </td>
-   <td style="text-align:center;"> 1.11.2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/future.apply </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/future.apply </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-03-28 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> generics </td>
-   <td style="text-align:center;"> generics </td>
-   <td style="text-align:center;"> 0.1.3 </td>
-   <td style="text-align:center;"> 0.1.3 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/generics </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/generics </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2022-07-05 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> ggplot2 </td>
-   <td style="text-align:center;"> ggplot2 </td>
-   <td style="text-align:center;"> 3.5.1 </td>
-   <td style="text-align:center;"> 3.5.1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ggplot2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ggplot2 </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-04-23 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> ggrepel </td>
-   <td style="text-align:center;"> ggrepel </td>
-   <td style="text-align:center;"> 0.9.6 </td>
-   <td style="text-align:center;"> 0.9.6 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ggrepel </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ggrepel </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-09-07 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> ggridges </td>
-   <td style="text-align:center;"> ggridges </td>
-   <td style="text-align:center;"> 0.5.6 </td>
-   <td style="text-align:center;"> 0.5.6 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ggridges </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ggridges </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-01-23 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> globals </td>
-   <td style="text-align:center;"> globals </td>
-   <td style="text-align:center;"> 0.16.3 </td>
-   <td style="text-align:center;"> 0.16.3 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/globals </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/globals </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-03-08 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> glue </td>
-   <td style="text-align:center;"> glue </td>
-   <td style="text-align:center;"> 1.8.0 </td>
-   <td style="text-align:center;"> 1.8.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/glue </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/glue </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-09-30 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> goftest </td>
-   <td style="text-align:center;"> goftest </td>
-   <td style="text-align:center;"> 1.2.3 </td>
-   <td style="text-align:center;"> 1.2-3 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/goftest </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/goftest </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2021-10-07 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> gridExtra </td>
-   <td style="text-align:center;"> gridExtra </td>
-   <td style="text-align:center;"> 2.3 </td>
-   <td style="text-align:center;"> 2.3 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/gridExtra </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/gridExtra </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2017-09-09 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> gtable </td>
-   <td style="text-align:center;"> gtable </td>
-   <td style="text-align:center;"> 0.3.5 </td>
-   <td style="text-align:center;"> 0.3.5 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/gtable </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/gtable </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-04-22 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> harmony </td>
-   <td style="text-align:center;"> harmony </td>
-   <td style="text-align:center;"> 1.2.1 </td>
-   <td style="text-align:center;"> 1.2.1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/harmony </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/harmony </td>
-   <td style="text-align:center;"> TRUE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-08-27 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> htmltools </td>
-   <td style="text-align:center;"> htmltools </td>
-   <td style="text-align:center;"> 0.5.8.1 </td>
-   <td style="text-align:center;"> 0.5.8.1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/htmltools </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/htmltools </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-04-04 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> htmlwidgets </td>
-   <td style="text-align:center;"> htmlwidgets </td>
-   <td style="text-align:center;"> 1.6.4 </td>
-   <td style="text-align:center;"> 1.6.4 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/htmlwidgets </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/htmlwidgets </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-12-06 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> httpuv </td>
-   <td style="text-align:center;"> httpuv </td>
-   <td style="text-align:center;"> 1.6.15 </td>
-   <td style="text-align:center;"> 1.6.15 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/httpuv </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/httpuv </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-03-26 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> httr </td>
-   <td style="text-align:center;"> httr </td>
-   <td style="text-align:center;"> 1.4.7 </td>
-   <td style="text-align:center;"> 1.4.7 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/httr </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/httr </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-08-15 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> ica </td>
-   <td style="text-align:center;"> ica </td>
-   <td style="text-align:center;"> 1.0.3 </td>
-   <td style="text-align:center;"> 1.0-3 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ica </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ica </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2022-07-08 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> igraph </td>
-   <td style="text-align:center;"> igraph </td>
-   <td style="text-align:center;"> 2.0.3 </td>
-   <td style="text-align:center;"> 2.0.3 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/igraph </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/igraph </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-03-13 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> irlba </td>
-   <td style="text-align:center;"> irlba </td>
-   <td style="text-align:center;"> 2.3.5.1 </td>
-   <td style="text-align:center;"> 2.3.5.1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/irlba </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/irlba </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2022-10-03 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> jquerylib </td>
-   <td style="text-align:center;"> jquerylib </td>
-   <td style="text-align:center;"> 0.1.4 </td>
-   <td style="text-align:center;"> 0.1.4 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/jquerylib </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/jquerylib </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2021-04-26 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> jsonlite </td>
-   <td style="text-align:center;"> jsonlite </td>
-   <td style="text-align:center;"> 1.8.9 </td>
-   <td style="text-align:center;"> 1.8.9 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/jsonlite </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/jsonlite </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-09-20 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> kableExtra </td>
-   <td style="text-align:center;"> kableExtra </td>
-   <td style="text-align:center;"> 1.4.0 </td>
-   <td style="text-align:center;"> 1.4.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/kableExtra </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/kableExtra </td>
-   <td style="text-align:center;"> TRUE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-01-24 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> KernSmooth </td>
-   <td style="text-align:center;"> KernSmooth </td>
-   <td style="text-align:center;"> 2.23.24 </td>
-   <td style="text-align:center;"> 2.23-24 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/KernSmooth </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/KernSmooth </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-05-17 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> knitr </td>
-   <td style="text-align:center;"> knitr </td>
-   <td style="text-align:center;"> 1.48 </td>
-   <td style="text-align:center;"> 1.48 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/knitr </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/knitr </td>
-   <td style="text-align:center;"> TRUE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-07-07 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> later </td>
-   <td style="text-align:center;"> later </td>
-   <td style="text-align:center;"> 1.3.2 </td>
-   <td style="text-align:center;"> 1.3.2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/later </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/later </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-12-06 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lattice </td>
-   <td style="text-align:center;"> lattice </td>
-   <td style="text-align:center;"> 0.22.6 </td>
-   <td style="text-align:center;"> 0.22-6 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/lattice </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/lattice </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-03-20 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lazyeval </td>
-   <td style="text-align:center;"> lazyeval </td>
-   <td style="text-align:center;"> 0.2.2 </td>
-   <td style="text-align:center;"> 0.2.2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/lazyeval </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/lazyeval </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2019-03-15 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> leiden </td>
-   <td style="text-align:center;"> leiden </td>
-   <td style="text-align:center;"> 0.4.3.1 </td>
-   <td style="text-align:center;"> 0.4.3.1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/leiden </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/leiden </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-11-17 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lifecycle </td>
-   <td style="text-align:center;"> lifecycle </td>
-   <td style="text-align:center;"> 1.0.4 </td>
-   <td style="text-align:center;"> 1.0.4 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/lifecycle </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/lifecycle </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-11-07 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> listenv </td>
-   <td style="text-align:center;"> listenv </td>
-   <td style="text-align:center;"> 0.9.1 </td>
-   <td style="text-align:center;"> 0.9.1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/listenv </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/listenv </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-01-29 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lmtest </td>
-   <td style="text-align:center;"> lmtest </td>
-   <td style="text-align:center;"> 0.9.40 </td>
-   <td style="text-align:center;"> 0.9-40 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/lmtest </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/lmtest </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2022-03-21 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> magrittr </td>
-   <td style="text-align:center;"> magrittr </td>
-   <td style="text-align:center;"> 2.0.3 </td>
-   <td style="text-align:center;"> 2.0.3 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/magrittr </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/magrittr </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2022-03-30 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> MASS </td>
-   <td style="text-align:center;"> MASS </td>
-   <td style="text-align:center;"> 7.3.61 </td>
-   <td style="text-align:center;"> 7.3-61 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/MASS </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/MASS </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-06-13 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Matrix </td>
-   <td style="text-align:center;"> Matrix </td>
-   <td style="text-align:center;"> 1.7.0 </td>
-   <td style="text-align:center;"> 1.7-0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Matrix </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Matrix </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-04-26 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> matrixStats </td>
-   <td style="text-align:center;"> matrixStats </td>
-   <td style="text-align:center;"> 1.4.1 </td>
-   <td style="text-align:center;"> 1.4.1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/matrixStats </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/matrixStats </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-09-08 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> memoise </td>
-   <td style="text-align:center;"> memoise </td>
-   <td style="text-align:center;"> 2.0.1 </td>
-   <td style="text-align:center;"> 2.0.1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/memoise </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/memoise </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2021-11-26 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> mime </td>
-   <td style="text-align:center;"> mime </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/mime </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/mime </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2021-09-28 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> miniUI </td>
-   <td style="text-align:center;"> miniUI </td>
-   <td style="text-align:center;"> 0.1.1.1 </td>
-   <td style="text-align:center;"> 0.1.1.1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/miniUI </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/miniUI </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2018-05-18 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> munsell </td>
-   <td style="text-align:center;"> munsell </td>
-   <td style="text-align:center;"> 0.5.1 </td>
-   <td style="text-align:center;"> 0.5.1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/munsell </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/munsell </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-04-01 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> nlme </td>
-   <td style="text-align:center;"> nlme </td>
-   <td style="text-align:center;"> 3.1.166 </td>
-   <td style="text-align:center;"> 3.1-166 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/nlme </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/nlme </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-08-14 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> parallelly </td>
-   <td style="text-align:center;"> parallelly </td>
-   <td style="text-align:center;"> 1.38.0 </td>
-   <td style="text-align:center;"> 1.38.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/parallelly </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/parallelly </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-07-27 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> patchwork </td>
-   <td style="text-align:center;"> patchwork </td>
-   <td style="text-align:center;"> 1.3.0 </td>
-   <td style="text-align:center;"> 1.3.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/patchwork </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/patchwork </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-09-16 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> pbapply </td>
-   <td style="text-align:center;"> pbapply </td>
-   <td style="text-align:center;"> 1.7.2 </td>
-   <td style="text-align:center;"> 1.7-2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/pbapply </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/pbapply </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-06-27 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> pillar </td>
-   <td style="text-align:center;"> pillar </td>
-   <td style="text-align:center;"> 1.9.0 </td>
-   <td style="text-align:center;"> 1.9.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/pillar </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/pillar </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-03-22 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> pkgbuild </td>
-   <td style="text-align:center;"> pkgbuild </td>
-   <td style="text-align:center;"> 1.4.4 </td>
-   <td style="text-align:center;"> 1.4.4 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/pkgbuild </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/pkgbuild </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-03-17 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> pkgconfig </td>
-   <td style="text-align:center;"> pkgconfig </td>
-   <td style="text-align:center;"> 2.0.3 </td>
-   <td style="text-align:center;"> 2.0.3 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/pkgconfig </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/pkgconfig </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2019-09-22 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> pkgload </td>
-   <td style="text-align:center;"> pkgload </td>
-   <td style="text-align:center;"> 1.4.0 </td>
-   <td style="text-align:center;"> 1.4.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/pkgload </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/pkgload </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-06-28 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> plotly </td>
-   <td style="text-align:center;"> plotly </td>
-   <td style="text-align:center;"> 4.10.4 </td>
-   <td style="text-align:center;"> 4.10.4 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/plotly </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/plotly </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-01-13 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> plyr </td>
-   <td style="text-align:center;"> plyr </td>
-   <td style="text-align:center;"> 1.8.9 </td>
-   <td style="text-align:center;"> 1.8.9 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/plyr </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/plyr </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-10-02 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> png </td>
-   <td style="text-align:center;"> png </td>
-   <td style="text-align:center;"> 0.1.8 </td>
-   <td style="text-align:center;"> 0.1-8 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/png </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/png </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2022-11-29 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> polyclip </td>
-   <td style="text-align:center;"> polyclip </td>
-   <td style="text-align:center;"> 1.10.7 </td>
-   <td style="text-align:center;"> 1.10-7 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/polyclip </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/polyclip </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-07-23 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> profvis </td>
-   <td style="text-align:center;"> profvis </td>
-   <td style="text-align:center;"> 0.4.0 </td>
-   <td style="text-align:center;"> 0.4.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/profvis </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/profvis </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-09-20 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> progressr </td>
-   <td style="text-align:center;"> progressr </td>
-   <td style="text-align:center;"> 0.14.0 </td>
-   <td style="text-align:center;"> 0.14.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/progressr </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/progressr </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-08-10 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> promises </td>
-   <td style="text-align:center;"> promises </td>
-   <td style="text-align:center;"> 1.3.0 </td>
-   <td style="text-align:center;"> 1.3.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/promises </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/promises </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-04-05 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> purrr </td>
-   <td style="text-align:center;"> purrr </td>
-   <td style="text-align:center;"> 1.0.2 </td>
-   <td style="text-align:center;"> 1.0.2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/purrr </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/purrr </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-08-10 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> R6 </td>
-   <td style="text-align:center;"> R6 </td>
-   <td style="text-align:center;"> 2.5.1 </td>
-   <td style="text-align:center;"> 2.5.1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/R6 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/R6 </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2021-08-19 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> RANN </td>
-   <td style="text-align:center;"> RANN </td>
-   <td style="text-align:center;"> 2.6.2 </td>
-   <td style="text-align:center;"> 2.6.2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RANN </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RANN </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-08-25 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> RColorBrewer </td>
-   <td style="text-align:center;"> RColorBrewer </td>
-   <td style="text-align:center;"> 1.1.3 </td>
-   <td style="text-align:center;"> 1.1-3 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RColorBrewer </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RColorBrewer </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2022-04-03 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Rcpp </td>
-   <td style="text-align:center;"> Rcpp </td>
-   <td style="text-align:center;"> 1.0.13 </td>
-   <td style="text-align:center;"> 1.0.13 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp </td>
-   <td style="text-align:center;"> TRUE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-07-17 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> RcppAnnoy </td>
-   <td style="text-align:center;"> RcppAnnoy </td>
-   <td style="text-align:center;"> 0.0.22 </td>
-   <td style="text-align:center;"> 0.0.22 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RcppAnnoy </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RcppAnnoy </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-01-23 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> RcppHNSW </td>
-   <td style="text-align:center;"> RcppHNSW </td>
-   <td style="text-align:center;"> 0.6.0 </td>
-   <td style="text-align:center;"> 0.6.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RcppHNSW </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RcppHNSW </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-02-04 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> remotes </td>
-   <td style="text-align:center;"> remotes </td>
-   <td style="text-align:center;"> 2.5.0 </td>
-   <td style="text-align:center;"> 2.5.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/remotes </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/remotes </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-03-17 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> reshape2 </td>
-   <td style="text-align:center;"> reshape2 </td>
-   <td style="text-align:center;"> 1.4.4 </td>
-   <td style="text-align:center;"> 1.4.4 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/reshape2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/reshape2 </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2020-04-09 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> reticulate </td>
-   <td style="text-align:center;"> reticulate </td>
-   <td style="text-align:center;"> 1.39.0 </td>
-   <td style="text-align:center;"> 1.39.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/reticulate </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/reticulate </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-09-05 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> rlang </td>
-   <td style="text-align:center;"> rlang </td>
-   <td style="text-align:center;"> 1.1.4 </td>
-   <td style="text-align:center;"> 1.1.4 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/rlang </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/rlang </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-06-04 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> rmarkdown </td>
-   <td style="text-align:center;"> rmarkdown </td>
-   <td style="text-align:center;"> 2.28 </td>
-   <td style="text-align:center;"> 2.28 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/rmarkdown </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/rmarkdown </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-08-17 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> ROCR </td>
-   <td style="text-align:center;"> ROCR </td>
-   <td style="text-align:center;"> 1.0.11 </td>
-   <td style="text-align:center;"> 1.0-11 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ROCR </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ROCR </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2020-05-02 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> RSpectra </td>
-   <td style="text-align:center;"> RSpectra </td>
-   <td style="text-align:center;"> 0.16.2 </td>
-   <td style="text-align:center;"> 0.16-2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RSpectra </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RSpectra </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-07-18 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> rstudioapi </td>
-   <td style="text-align:center;"> rstudioapi </td>
-   <td style="text-align:center;"> 0.16.0 </td>
-   <td style="text-align:center;"> 0.16.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/rstudioapi </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/rstudioapi </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-03-24 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Rtsne </td>
-   <td style="text-align:center;"> Rtsne </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rtsne </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rtsne </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-12-07 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> sass </td>
-   <td style="text-align:center;"> sass </td>
-   <td style="text-align:center;"> 0.4.9 </td>
-   <td style="text-align:center;"> 0.4.9 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/sass </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/sass </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-03-15 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> scales </td>
-   <td style="text-align:center;"> scales </td>
-   <td style="text-align:center;"> 1.3.0 </td>
-   <td style="text-align:center;"> 1.3.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/scales </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/scales </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-11-28 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> scattermore </td>
-   <td style="text-align:center;"> scattermore </td>
-   <td style="text-align:center;"> 1.2 </td>
-   <td style="text-align:center;"> 1.2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/scattermore </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/scattermore </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-06-12 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> sctransform </td>
-   <td style="text-align:center;"> sctransform </td>
-   <td style="text-align:center;"> 0.4.1 </td>
-   <td style="text-align:center;"> 0.4.1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/sctransform </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/sctransform </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-10-19 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> sessioninfo </td>
-   <td style="text-align:center;"> sessioninfo </td>
-   <td style="text-align:center;"> 1.2.2 </td>
-   <td style="text-align:center;"> 1.2.2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/sessioninfo </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/sessioninfo </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2021-12-06 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Seurat </td>
-   <td style="text-align:center;"> Seurat </td>
-   <td style="text-align:center;"> 5.1.0 </td>
-   <td style="text-align:center;"> 5.1.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Seurat </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Seurat </td>
-   <td style="text-align:center;"> TRUE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-05-10 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> SeuratObject </td>
-   <td style="text-align:center;"> SeuratObject </td>
-   <td style="text-align:center;"> 5.0.2 </td>
-   <td style="text-align:center;"> 5.0.2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/SeuratObject </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/SeuratObject </td>
-   <td style="text-align:center;"> TRUE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-05-08 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> shiny </td>
-   <td style="text-align:center;"> shiny </td>
-   <td style="text-align:center;"> 1.9.1 </td>
-   <td style="text-align:center;"> 1.9.1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/shiny </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/shiny </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-08-01 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> sp </td>
-   <td style="text-align:center;"> sp </td>
-   <td style="text-align:center;"> 2.1.4 </td>
-   <td style="text-align:center;"> 2.1-4 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/sp </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/sp </td>
-   <td style="text-align:center;"> TRUE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-04-30 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> spam </td>
-   <td style="text-align:center;"> spam </td>
-   <td style="text-align:center;"> 2.10.0 </td>
-   <td style="text-align:center;"> 2.10-0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/spam </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/spam </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-10-23 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> spatstat.data </td>
-   <td style="text-align:center;"> spatstat.data </td>
-   <td style="text-align:center;"> 3.1.2 </td>
-   <td style="text-align:center;"> 3.1-2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/spatstat.data </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/spatstat.data </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-06-21 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> spatstat.explore </td>
-   <td style="text-align:center;"> spatstat.explore </td>
-   <td style="text-align:center;"> 3.3.2 </td>
-   <td style="text-align:center;"> 3.3-2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/spatstat.explore </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/spatstat.explore </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-08-21 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> spatstat.geom </td>
-   <td style="text-align:center;"> spatstat.geom </td>
-   <td style="text-align:center;"> 3.3.3 </td>
-   <td style="text-align:center;"> 3.3-3 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/spatstat.geom </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/spatstat.geom </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-09-18 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> spatstat.random </td>
-   <td style="text-align:center;"> spatstat.random </td>
-   <td style="text-align:center;"> 3.3.2 </td>
-   <td style="text-align:center;"> 3.3-2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/spatstat.random </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/spatstat.random </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-09-18 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> spatstat.sparse </td>
-   <td style="text-align:center;"> spatstat.sparse </td>
-   <td style="text-align:center;"> 3.1.0 </td>
-   <td style="text-align:center;"> 3.1-0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/spatstat.sparse </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/spatstat.sparse </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-06-21 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> spatstat.univar </td>
-   <td style="text-align:center;"> spatstat.univar </td>
-   <td style="text-align:center;"> 3.0.1 </td>
-   <td style="text-align:center;"> 3.0-1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/spatstat.univar </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/spatstat.univar </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-09-05 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.1) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> spatstat.utils </td>
-   <td style="text-align:center;"> spatstat.utils </td>
-   <td style="text-align:center;"> 3.1.0 </td>
-   <td style="text-align:center;"> 3.1-0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/spatstat.utils </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/spatstat.utils </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-08-17 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> stringi </td>
-   <td style="text-align:center;"> stringi </td>
-   <td style="text-align:center;"> 1.8.4 </td>
-   <td style="text-align:center;"> 1.8.4 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/stringi </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/stringi </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-05-06 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> stringr </td>
-   <td style="text-align:center;"> stringr </td>
-   <td style="text-align:center;"> 1.5.1 </td>
-   <td style="text-align:center;"> 1.5.1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/stringr </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/stringr </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-11-14 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> survival </td>
-   <td style="text-align:center;"> survival </td>
-   <td style="text-align:center;"> 3.7.0 </td>
-   <td style="text-align:center;"> 3.7-0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/survival </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/survival </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-06-05 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> svglite </td>
-   <td style="text-align:center;"> svglite </td>
-   <td style="text-align:center;"> 2.1.3 </td>
-   <td style="text-align:center;"> 2.1.3 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/svglite </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/svglite </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-12-08 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> systemfonts </td>
-   <td style="text-align:center;"> systemfonts </td>
-   <td style="text-align:center;"> 1.1.0 </td>
-   <td style="text-align:center;"> 1.1.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/systemfonts </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/systemfonts </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-05-15 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> tensor </td>
-   <td style="text-align:center;"> tensor </td>
-   <td style="text-align:center;"> 1.5 </td>
-   <td style="text-align:center;"> 1.5 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/tensor </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/tensor </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2012-05-05 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> tibble </td>
-   <td style="text-align:center;"> tibble </td>
-   <td style="text-align:center;"> 3.2.1 </td>
-   <td style="text-align:center;"> 3.2.1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/tibble </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/tibble </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-03-20 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> tidyr </td>
-   <td style="text-align:center;"> tidyr </td>
-   <td style="text-align:center;"> 1.3.1 </td>
-   <td style="text-align:center;"> 1.3.1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/tidyr </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/tidyr </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-01-24 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> tidyselect </td>
-   <td style="text-align:center;"> tidyselect </td>
-   <td style="text-align:center;"> 1.2.1 </td>
-   <td style="text-align:center;"> 1.2.1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/tidyselect </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/tidyselect </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-03-11 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> urlchecker </td>
-   <td style="text-align:center;"> urlchecker </td>
-   <td style="text-align:center;"> 1.0.1 </td>
-   <td style="text-align:center;"> 1.0.1 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/urlchecker </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/urlchecker </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2021-11-30 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> usethis </td>
-   <td style="text-align:center;"> usethis </td>
-   <td style="text-align:center;"> 3.0.0 </td>
-   <td style="text-align:center;"> 3.0.0 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/usethis </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/usethis </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-07-29 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> utf8 </td>
-   <td style="text-align:center;"> utf8 </td>
-   <td style="text-align:center;"> 1.2.4 </td>
-   <td style="text-align:center;"> 1.2.4 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/utf8 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/utf8 </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-10-22 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> uwot </td>
-   <td style="text-align:center;"> uwot </td>
-   <td style="text-align:center;"> 0.2.2 </td>
-   <td style="text-align:center;"> 0.2.2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/uwot </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/uwot </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-04-21 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> vctrs </td>
-   <td style="text-align:center;"> vctrs </td>
-   <td style="text-align:center;"> 0.6.5 </td>
-   <td style="text-align:center;"> 0.6.5 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/vctrs </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/vctrs </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-12-01 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> viridisLite </td>
-   <td style="text-align:center;"> viridisLite </td>
-   <td style="text-align:center;"> 0.4.2 </td>
-   <td style="text-align:center;"> 0.4.2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/viridisLite </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/viridisLite </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-05-02 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> xfun </td>
-   <td style="text-align:center;"> xfun </td>
-   <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/xfun </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/xfun </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-08-17 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> xml2 </td>
-   <td style="text-align:center;"> xml2 </td>
-   <td style="text-align:center;"> 1.3.6 </td>
-   <td style="text-align:center;"> 1.3.6 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/xml2 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/xml2 </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-12-04 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> xtable </td>
-   <td style="text-align:center;"> xtable </td>
-   <td style="text-align:center;"> 1.8.4 </td>
-   <td style="text-align:center;"> 1.8-4 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/xtable </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/xtable </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2019-04-21 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> yaml </td>
-   <td style="text-align:center;"> yaml </td>
-   <td style="text-align:center;"> 2.3.10 </td>
-   <td style="text-align:center;"> 2.3.10 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/yaml </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/yaml </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2024-07-26 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> zoo </td>
-   <td style="text-align:center;"> zoo </td>
-   <td style="text-align:center;"> 1.8.12 </td>
-   <td style="text-align:center;"> 1.8-12 </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/zoo </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/zoo </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> FALSE </td>
-   <td style="text-align:center;"> 2023-04-13 </td>
-   <td style="text-align:center;"> CRAN (R 4.4.0) </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library </td>
-  </tr>
-</tbody>
-</table>
